@@ -77,11 +77,6 @@
               gallery.innerHTML = ''; // Limpa a galeria antes de carregar
           
               fotos.forEach(({ url, name }) => {
-                if (!url || !name) {
-                  console.error('Dados inválidos:', { url, name });
-                  return;
-                }
-          
                 const galleryItem = document.createElement('div');
                 galleryItem.className = 'gallery-item';
           
@@ -93,25 +88,26 @@
                 downloadBtn.className = 'download-btn';
                 downloadBtn.textContent = 'Download';
           
-                // Configuração do evento de download
-                downloadBtn.addEventListener('click', () => {
-                  // Força o download criando um blob
-                  fetch(url)
-                    .then(response => response.blob())
-                    .then(blob => {
-                      const downloadUrl = window.URL.createObjectURL(blob);
-                      const link = document.createElement('a');
-                      link.href = downloadUrl;
-                      link.download = name; // Nome do arquivo
-                      document.body.appendChild(link);
-                      link.click(); // Simula o clique
-                      document.body.removeChild(link); // Remove o link após o download
-                      window.URL.revokeObjectURL(downloadUrl); // Revoga o objeto URL
-                    })
-                    .catch(error => {
-                      console.error('Erro no download:', error);
-                      alert('Falha ao realizar o download.');
-                    });
+                downloadBtn.addEventListener('click', async () => {
+                  try {
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error('Falha ao acessar o arquivo.');
+          
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+          
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = name || 'foto-casamento.jpg'; // Nome padrão
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(downloadUrl);
+                  } catch (error) {
+                    alert('Erro ao realizar o download.');
+                    console.error('Erro no download:', error);
+                  }
                 });
           
                 galleryItem.appendChild(img);
@@ -122,6 +118,7 @@
               console.error('Erro ao carregar fotos:', error);
             }
           }
+          
           
           
           
