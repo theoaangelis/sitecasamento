@@ -72,10 +72,16 @@
             try {
               const response = await fetch('https://galeriacasamento.netlify.app/.netlify/functions/fotos');
               const fotos = await response.json();
+          
               const gallery = document.querySelector('.gallery');
               gallery.innerHTML = ''; // Limpa a galeria antes de carregar
           
               fotos.forEach(({ url, name }) => {
+                if (!url || !name) {
+                  console.error('Dados inválidos:', { url, name });
+                  return;
+                }
+          
                 const galleryItem = document.createElement('div');
                 galleryItem.className = 'gallery-item';
           
@@ -87,15 +93,15 @@
                 downloadBtn.className = 'download-btn';
                 downloadBtn.textContent = 'Download';
           
-                // Ajuste do evento de download
+                // Configurar o download
                 downloadBtn.onclick = () => {
                   const link = document.createElement('a');
                   link.href = url;
-                  link.setAttribute('download', name); // Força o download
-                  link.style.display = 'none'; // Esconde o link
+                  link.setAttribute('download', name);
+                  link.style.display = 'none';
                   document.body.appendChild(link);
-                  link.click(); // Simula o clique no link
-                  document.body.removeChild(link); // Remove o link depois
+                  link.click();
+                  document.body.removeChild(link);
                 };
           
                 galleryItem.appendChild(img);
@@ -106,6 +112,7 @@
               console.error('Erro ao carregar fotos:', error);
             }
           }
+          
           
 
         // Carrega as fotos ao iniciar
