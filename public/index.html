@@ -92,27 +92,15 @@
                 downloadBtn.className = 'download-btn';
                 downloadBtn.textContent = 'Download';
           
-                // Forçar o download
-                downloadBtn.addEventListener('click', async () => {
-                  try {
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error(`Erro ao acessar a imagem: ${response.statusText}`);
-          
-                    const blob = await response.blob();
-                    const downloadUrl = window.URL.createObjectURL(blob);
-          
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.setAttribute('download', name || 'arquivo.jpg'); // Define o nome do arquivo
-                    document.body.appendChild(link);
-                    link.click(); // Simula o clique
-                    document.body.removeChild(link); // Remove o link
-                    window.URL.revokeObjectURL(downloadUrl); // Revoga o URL temporário
-                  } catch (error) {
-                    console.error('Erro no download:', error);
-                    alert('Falha ao realizar o download.');
-                  }
-                });
+                // Forçar o download direto da imagem
+                downloadBtn.onclick = () => {
+                  const link = document.createElement('a');
+                  link.href = url; // URL da imagem diretamente
+                  link.download = name || 'imagem.jpg'; // Força o download e define o nome
+                  document.body.appendChild(link); // Adiciona o link ao DOM
+                  link.click(); // Simula o clique
+                  document.body.removeChild(link); // Remove o link após o clique
+                };
           
                 galleryItem.appendChild(img);
                 galleryItem.appendChild(downloadBtn);
@@ -123,6 +111,7 @@
               alert('Erro ao carregar as fotos. Tente novamente mais tarde.');
             }
           }
+          
           
           // Carrega as fotos ao iniciar
           carregarFotos();
