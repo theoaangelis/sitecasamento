@@ -93,15 +93,14 @@
                 downloadBtn.className = 'download-btn';
                 downloadBtn.textContent = 'Download';
           
-                // Configurar o download
+                // Configuração do evento para download funcional
                 downloadBtn.onclick = () => {
                   const link = document.createElement('a');
-                  link.href = url;
-                  link.setAttribute('download', name);
-                  link.style.display = 'none';
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
+                  link.href = url; 
+                  link.download = name; // Força o download com o nome correto
+                  document.body.appendChild(link); // Adiciona o link ao DOM
+                  link.click(); // Simula o clique no link
+                  document.body.removeChild(link); // Remove o link após o clique
                 };
           
                 galleryItem.appendChild(img);
@@ -112,6 +111,7 @@
               console.error('Erro ao carregar fotos:', error);
             }
           }
+          
           
           
 
