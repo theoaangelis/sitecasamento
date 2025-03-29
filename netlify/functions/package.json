@@ -1,0 +1,8 @@
+{
+    "name": "galeria-casamento",
+    "version": "1.0.0",
+    "dependencies": {
+        "aws-sdk": "^2.1692.0",
+        "lambda-multipart-parser": "^1.0.1"
+    }
+}
