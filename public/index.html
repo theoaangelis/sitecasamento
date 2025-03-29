@@ -72,7 +72,6 @@
             try {
               const response = await fetch('https://galeriacasamento.netlify.app/.netlify/functions/fotos');
               const fotos = await response.json();
-          
               const gallery = document.querySelector('.gallery');
               gallery.innerHTML = ''; // Limpa a galeria antes de carregar
           
@@ -88,27 +87,16 @@
                 downloadBtn.className = 'download-btn';
                 downloadBtn.textContent = 'Download';
           
-                downloadBtn.addEventListener('click', async () => {
-                  try {
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error('Falha ao acessar o arquivo.');
-          
-                    const blob = await response.blob();
-                    const downloadUrl = window.URL.createObjectURL(blob);
-          
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.download = name || 'foto-casamento.jpg'; // Nome padrão
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    window.URL.revokeObjectURL(downloadUrl);
-                  } catch (error) {
-                    alert('Erro ao realizar o download.');
-                    console.error('Erro no download:', error);
-                  }
-                });
+                // Ajuste do evento de download
+                downloadBtn.onclick = () => {
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.setAttribute('download', name); // Força o download
+                  link.style.display = 'none'; // Esconde o link
+                  document.body.appendChild(link);
+                  link.click(); // Simula o clique no link
+                  document.body.removeChild(link); // Remove o link depois
+                };
           
                 galleryItem.appendChild(img);
                 galleryItem.appendChild(downloadBtn);
@@ -120,10 +108,8 @@
           }
           
           
-          
-          
-          
-          
+
+
 
         // Carrega as fotos ao iniciar
         carregarFotos();
