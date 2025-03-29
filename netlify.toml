@@ -1,0 +1,8 @@
+[build]
+  publish = "public"       # Pasta onde está seu index.html
+  functions = "netlify/functions"  # Pasta das funções serverless
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
