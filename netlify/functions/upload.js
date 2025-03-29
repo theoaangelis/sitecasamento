@@ -57,3 +57,4 @@ exports.handler = async (event) => {
     };
   }
 };
+console.log('Bucket Name:', process.env.MEUAPP_S3_BUCKET_NAME);
