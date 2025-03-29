@@ -1,32 +1,29 @@
-const aws = require('aws-sdk');
+const aws = require('aws-sdk'); // ✅ Declare apenas uma vez no início
 const { parse } = require('lambda-multipart-parser');
 
+// Configuração AWS
 aws.config.update({
   accessKeyId: process.env.MEUAPP_AWS_ACCESS_KEY_ID,       // ✅ Prefixo MEUAPP_
   secretAccessKey: process.env.MEUAPP_AWS_SECRET_ACCESS_KEY, // ✅ Prefixo MEUAPP_
   region: process.env.MEUAPP_AWS_REGION,                   // ✅ Prefixo MEUAPP_
 });
 
-
-const aws = require('aws-sdk');
-const { parse } = require('lambda-multipart-parser');
-
 exports.handler = async (event) => {
   // Configuração CORS para evitar erros
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type'
+    'Access-Control-Allow-Headers': 'Content-Type',
   };
 
   try {
-    const result = await parse(event);
-    const file = result.files[0];
+    const result = await parse(event); // Faz o parse do arquivo
+    const file = result.files[0];     // Obtém o arquivo enviado
 
     if (!file) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'Nenhum arquivo enviado' })
+        body: JSON.stringify({ error: 'Nenhum arquivo enviado' }),
       };
     }
 
@@ -34,7 +31,7 @@ exports.handler = async (event) => {
       Bucket: process.env.MEUAPP_S3_BUCKET_NAME,
       Key: `${Date.now()}-${file.filename}`,
       Body: file.content,
-      ContentType: file.contentType
+      ContentType: file.contentType,
     };
 
     const data = await new aws.S3().upload(params).promise();
@@ -45,7 +42,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({ 
         success: true, 
         url: data.Location 
-      })
+      }),
     };
 
   } catch (error) {
@@ -55,8 +52,8 @@ exports.handler = async (event) => {
       headers,
       body: JSON.stringify({ 
         error: 'Erro no servidor',
-        details: error.message 
-      })
+        details: error.message,
+      }),
     };
   }
 };
