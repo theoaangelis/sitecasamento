@@ -93,15 +93,26 @@
                 downloadBtn.className = 'download-btn';
                 downloadBtn.textContent = 'Download';
           
-                // Configuração do evento para download funcional
-                downloadBtn.onclick = () => {
-                  const link = document.createElement('a');
-                  link.href = url; 
-                  link.download = name; // Força o download com o nome correto
-                  document.body.appendChild(link); // Adiciona o link ao DOM
-                  link.click(); // Simula o clique no link
-                  document.body.removeChild(link); // Remove o link após o clique
-                };
+                // Configuração do evento de download
+                downloadBtn.addEventListener('click', () => {
+                  // Força o download criando um blob
+                  fetch(url)
+                    .then(response => response.blob())
+                    .then(blob => {
+                      const downloadUrl = window.URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.href = downloadUrl;
+                      link.download = name; // Nome do arquivo
+                      document.body.appendChild(link);
+                      link.click(); // Simula o clique
+                      document.body.removeChild(link); // Remove o link após o download
+                      window.URL.revokeObjectURL(downloadUrl); // Revoga o objeto URL
+                    })
+                    .catch(error => {
+                      console.error('Erro no download:', error);
+                      alert('Falha ao realizar o download.');
+                    });
+                });
           
                 galleryItem.appendChild(img);
                 galleryItem.appendChild(downloadBtn);
@@ -111,6 +122,7 @@
               console.error('Erro ao carregar fotos:', error);
             }
           }
+          
           
           
           
