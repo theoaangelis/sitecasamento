@@ -76,6 +76,11 @@
               gallery.innerHTML = ''; // Limpa a galeria antes de carregar
           
               fotos.forEach(({ url, name }) => {
+                if (!url || !name) {
+                  console.error('Dados inválidos:', { url, name });
+                  return;
+                }
+          
                 const galleryItem = document.createElement('div');
                 galleryItem.className = 'gallery-item';
           
@@ -86,12 +91,28 @@
                 const downloadBtn = document.createElement('div');
                 downloadBtn.className = 'download-btn';
                 downloadBtn.textContent = 'Download';
-                downloadBtn.onclick = () => {
-                  const link = document.createElement('a');
-                  link.href = url;
-                  link.download = name;
-                  link.click();
-                };
+          
+                // Forçar o download
+                downloadBtn.addEventListener('click', async () => {
+                  try {
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error(`Erro ao acessar a imagem: ${response.statusText}`);
+          
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+          
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.setAttribute('download', name || 'arquivo.jpg'); // Define o nome do arquivo
+                    document.body.appendChild(link);
+                    link.click(); // Simula o clique
+                    document.body.removeChild(link); // Remove o link
+                    window.URL.revokeObjectURL(downloadUrl); // Revoga o URL temporário
+                  } catch (error) {
+                    console.error('Erro no download:', error);
+                    alert('Falha ao realizar o download.');
+                  }
+                });
           
                 galleryItem.appendChild(img);
                 galleryItem.appendChild(downloadBtn);
@@ -99,9 +120,10 @@
               });
             } catch (error) {
               console.error('Erro ao carregar fotos:', error);
+              alert('Erro ao carregar as fotos. Tente novamente mais tarde.');
             }
           }
-
+          
           // Carrega as fotos ao iniciar
           carregarFotos();
           
